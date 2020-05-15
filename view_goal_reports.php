@@ -36,17 +36,17 @@
                     </tr>
                 </thead>
             <tbody>';
-        if ($unresolved_result->num_rows > 0) {
+        if ($unresolved_result->num_rows > 0) { // listing unresolved goal reports
             while($report = $unresolved_result->fetch_assoc()) { 
                 $table .= '<tr class="table-success text-center">';
                 $table .= '<td class="align-middle">'.$report['report_time'].'</td>';
                 $table .= '<td class="align-middle">'.$report['reporter'].'</td>';
                 $table .= '<td class="align-middle">'.$report['owner'].'</td>';
                 
-                $sql = "select username, goal_name from goals where goal_id = ?";
+                $sql = "select goal_name from goals where goal_id = ?";
                 $stmt = mysqli_stmt_init($conn);
                 if (!mysqli_stmt_prepare($stmt, $sql)){
-                    header("Location: ../view_report.php?error=sqlerror");
+                    header("Location: ../admin_index.php?error=sqlerror");
                     exit();
                 }
                 else {
@@ -99,7 +99,7 @@
                 $table .= '</tr>';
             }
         } 
-        if ($resolved_result->num_rows > 0) {
+        if ($resolved_result->num_rows > 0) { // listing resolved goal reports
             while($report = $resolved_result->fetch_assoc()) { 
                 $table .= '<tr class="table-primary text-center">';
                 $table .= '<td class="align-middle">'.$report['report_time'].'</td>';

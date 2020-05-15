@@ -1,5 +1,6 @@
 <?php
     function deleteActivity($conn, $activity_id){
+        // remove activity
         $sql = "delete from activity_table where activity_id = ?";
         $stmt = mysqli_stmt_init($conn);
         if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -7,6 +8,7 @@
             exit();
         }
         else {
+            // update report status
             mysqli_stmt_bind_param($stmt, "i", $activity_id);
             mysqli_stmt_execute($stmt);
             
@@ -17,11 +19,32 @@
                 exit();
             }
             else {
+                // remove activity group
                 mysqli_stmt_bind_param($stmt, "i", $activity_id);
                 mysqli_stmt_execute($stmt);
                 
-                // delete group chat
-                
+                $sql = "delete from activity_users_list where activity_id = ?";
+                $stmt = mysqli_stmt_init($conn);
+                if (!mysqli_stmt_prepare($stmt, $sql)){
+                    header("Location: admin_index.php?error=sqlerror");
+                    exit();
+                }
+                else {
+                    // remove group chat data
+                    mysqli_stmt_bind_param($stmt, "i", $activity_id);
+                    mysqli_stmt_execute($stmt);
+                    
+                    $sql = "delete from activity_chat_message where activity_id = ?";
+                    $stmt = mysqli_stmt_init($conn);
+                    if (!mysqli_stmt_prepare($stmt, $sql)){
+                        header("Location: admin_index.php?error=sqlerror");
+                        exit();
+                    }
+                    else {
+                        mysqli_stmt_bind_param($stmt, "i", $activity_id);
+                        mysqli_stmt_execute($stmt);
+                    }
+                }
             }
         } 
     }
@@ -33,6 +56,7 @@
         $conn = connect_db();
         
         if (!empty($vars['activity_id'])) {
+            // only delete activity
             $sql1 = "select email from login where username = ?";
             $stmt1 = mysqli_stmt_init($conn);
             $sql2 = "select activity_name from activity_table where activity_id = ?";
@@ -51,6 +75,7 @@
                 $result2 = mysqli_stmt_get_result($stmt2);
                 $activity = mysqli_fetch_assoc($result2);
             
+                // send email notification
                 $message = '<p>Dear '.$vars['username'].',</p>';
                 $message .= '<p>We deleted your activity "'.$activity['activity_name'].'" because its content contains some inappropriate information.</p>';
                 $message .= '<p>Please send an email to noreply-habitracker@gmail.com if you have any queries.</p>';            
@@ -77,6 +102,7 @@
             }
         }
         else {
+            // delete activity after delete user
             $sql = "select activity_id from activity_table where username = ?";
             $stmt = mysqli_stmt_init($conn);
             if (!mysqli_stmt_prepare($stmt, $sql)) {

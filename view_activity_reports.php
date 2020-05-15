@@ -36,13 +36,47 @@
                     </tr>
                 </thead>
             <tbody>';
-        if ($unresolved_result->num_rows > 0) {
+        if ($unresolved_result->num_rows > 0) { // listing unresolved activity reports
             while($report = $unresolved_result->fetch_assoc()) { 
                 $table .= '<tr class="table-success text-center">';
                 $table .= '<td class="align-middle">'.$report['report_time'].'</td>';
                 $table .= '<td class="align-middle">'.$report['reporter'].'</td>';
-                $table .= '<td class="align-middle">'.$report['owner'].'</td>';              
-                $table .= '<td class="align-middle">'.$report['activity_name'].'</td>';                
+                $table .= '<td class="align-middle">'.$report['owner'].'</td>';     
+                
+                $sql = "select activity_name from activity_table where activity_id = ?";
+                $stmt = mysqli_stmt_init($conn);
+                if (!mysqli_stmt_prepare($stmt, $sql)){
+                    header("Location: ../admin_index.php?error=sqlerror");
+                    exit();
+                }
+                else {
+                    mysqli_stmt_bind_param($stmt, "i", $report['activity_id']);
+                    mysqli_stmt_execute($stmt);
+                    $result = mysqli_stmt_get_result($stmt);
+                    $activity = mysqli_fetch_assoc($result);
+
+                    if ($activity == null){
+                        $table .= '<td class="align-middle">'.$report['activity_name'].'</td>';
+                    }
+                    else {
+                        if ($activity['activity_name'] != $report['activity_name']) {
+                            // update activity name in report
+                            $sql = "update reports set activity_name = ? where activity_id = ?";
+                            $stmt = mysqli_stmt_init($conn);
+                            if (!mysqli_stmt_prepare($stmt, $sql)){
+                                header("Location: ../admin_index.php?error=sqlerror");
+                                exit();
+                            }
+                            else {
+                                mysqli_stmt_bind_param($stmt, "si", $activity['activity_name'], $report['activity_id']);
+                                mysqli_stmt_execute($stmt);
+                            }
+                        }
+
+                        $table .= '<td class="align-middle">'.$activity['activity_name'].'</td>';
+                    }
+                }
+                
                 $table .= '<td class="text-left align-middle text-wrap">'.$report['reason'].'</td>';
                 
                 if ($report['deleted'] == false && $report['dismissed'] == false) {
@@ -65,13 +99,47 @@
                 $table .= '</tr>';
             }
         } 
-        if ($resolved_result->num_rows > 0) {
+        if ($resolved_result->num_rows > 0) { // listing resolved activity reports
             while($report = $resolved_result->fetch_assoc()) { 
                 $table .= '<tr class="table-primary text-center">';
                 $table .= '<td class="align-middle">'.$report['report_time'].'</td>';
                 $table .= '<td class="align-middle">'.$report['reporter'].'</td>';
                 $table .= '<td class="align-middle">'.$report['owner'].'</td>';
-                $table .= '<td class="align-middle">'.$report['activity_name'].'</td>';
+                
+                $sql = "select activity_name from activity_table where activity_id = ?";
+                $stmt = mysqli_stmt_init($conn);
+                if (!mysqli_stmt_prepare($stmt, $sql)){
+                    header("Location: ../admin_index.php?error=sqlerror");
+                    exit();
+                }
+                else {
+                    mysqli_stmt_bind_param($stmt, "i", $report['activity_id']);
+                    mysqli_stmt_execute($stmt);
+                    $result = mysqli_stmt_get_result($stmt);
+                    $activity = mysqli_fetch_assoc($result);
+
+                    if ($activity == null){
+                        $table .= '<td class="align-middle">'.$report['activity_name'].'</td>';
+                    }
+                    else {
+                        if ($activity['activity_name'] != $report['activity_name']) {
+                            // update activity name in report
+                            $sql = "update reports set activity_name = ? where activity_id = ?";
+                            $stmt = mysqli_stmt_init($conn);
+                            if (!mysqli_stmt_prepare($stmt, $sql)){
+                                header("Location: ../admin_index.php?error=sqlerror");
+                                exit();
+                            }
+                            else {
+                                mysqli_stmt_bind_param($stmt, "si", $activity['activity_name'], $report['activity_id']);
+                                mysqli_stmt_execute($stmt);
+                            }
+                        }
+
+                        $table .= '<td class="align-middle">'.$activity['activity_name'].'</td>';
+                    }
+                }
+                
                 $table .= '<td class="text-left align-middle text-wrap">'.$report['reason'].'</td>';
                 
                 if ($report['deleted'] == true) {

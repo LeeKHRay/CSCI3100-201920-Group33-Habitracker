@@ -5,6 +5,7 @@
         require 'db_key.php';
         $conn = connect_db();
         
+        // find user's email address
         $sql = "select email from login where user_id = ?";
         $stmt = mysqli_stmt_init($conn);
         if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -17,6 +18,7 @@
             $result = mysqli_stmt_get_result($stmt);
             $account = mysqli_fetch_assoc($result);
             
+            // send email notification
             $message = '<p>Dear '.$vars['username'].',</p>';
             $message .= '<p>We deleted your account because you keep creating goals/activities that contain inappropriate information.</p>';
             $message .= '<p>Please send an email to noreply-habitracker@gmail.com if you have any queries.</p>';            
@@ -36,6 +38,7 @@
             $mail->Body = $message;
             $mail->AddAddress($account['email']);
 
+            // delete user
             $sql = "delete from login where user_id = ?";
             $stmt = mysqli_stmt_init($conn);
             if (!mysqli_stmt_prepare($stmt, $sql)){

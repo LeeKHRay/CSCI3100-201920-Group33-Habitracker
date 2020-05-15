@@ -1,5 +1,6 @@
 <?php
     function deleteGoal($conn, $goal_id) {
+        // remove goal
         $sql = "delete from goals where goal_id = ?";
         $stmt = mysqli_stmt_init($conn);
         if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -7,6 +8,7 @@
             exit();
         }
         else {
+            // update report status
             mysqli_stmt_bind_param($stmt, "i", $goal_id);
             mysqli_stmt_execute($stmt);
 
@@ -30,6 +32,7 @@
         $conn = connect_db();
         
         if (!empty($vars['goal_id'])) {
+            // only delete goal
             $sql1 = "select email from login where username = ?";
             $stmt1 = mysqli_stmt_init($conn);
             $sql2 = "select goal_name from goals where goal_id = ?";
@@ -48,6 +51,7 @@
                 $result2 = mysqli_stmt_get_result($stmt2);
                 $goal = mysqli_fetch_assoc($result2);
             
+                // send email notification
                 $message = '<p>Dear '.$vars['username'].',</p>';
                 $message .= '<p>We deleted your goal "'.$goal['goal_name'].'" because its content contains some inappropriate information.</p>';
                 $message .= '<p>Please send an email to noreply-habitracker@gmail.com if you have any queries.</p>';            
@@ -74,6 +78,7 @@
             }
         }
         else {
+            // delete goal after delete user
             $sql = "select goal_id from goals where username = ?";
             $stmt = mysqli_stmt_init($conn);
             if (!mysqli_stmt_prepare($stmt, $sql)) {

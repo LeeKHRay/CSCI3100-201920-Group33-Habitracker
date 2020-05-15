@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    // delete a user
     $(".deleteUser").on("click", function(){
         $user_id = $(this).data("id");
         $username = $(this).data("username");
@@ -33,6 +34,7 @@ $(document).ready(function() {
         });
     });
     
+    // delete a goal
     $(".deleteGoal").on("click", function(){
         $.ajax({
             url: "admin_delete_goal.php",
@@ -47,6 +49,7 @@ $(document).ready(function() {
         });
     });
     
+    // delete a activity
     $(".deleteActivity").on("click", function(){
         $.ajax({
             url: "admin_delete_activity.php",
@@ -61,6 +64,7 @@ $(document).ready(function() {
         });
     });
     
+    // dismiss report
     $(".dismiss").on("click", function(){
         $.ajax({
             url: "dismiss_report.php",
@@ -74,6 +78,7 @@ $(document).ready(function() {
         });
     });
     
+    // resolve report
     $(".resolve").on("click", function(){
         $.ajax({
             url: "resolve_report.php",

@@ -17,6 +17,7 @@
 <div><h1 align=center>Goal List</h1></div>
 
 <?php
+    // list all goals in a table
     if($result->num_rows > 0) {
         $table = 
             '<table class="table table-bordered table-hover table-sm text-nowrap">

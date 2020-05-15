@@ -17,6 +17,7 @@
 <div><h1 align=center>User List</h1></div>
 
 <?php
+    // list all user in a table
     if($result->num_rows > 0) {
         $table = 
             '<table class="table table-bordered table-hover table-sm text-nowrap">
